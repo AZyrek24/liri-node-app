@@ -12,19 +12,26 @@ var Spotify = require('node-spotify-api');
 //=============================================================================================================
 var command = process.argv[2];
 var song = "";
+var movie = "";
 //API key information
-// var spotify = new Spotify(keys.spotify);
-var spotify = new Spotify({
-  id: keys.spotify.id,
-  secret: keys.spotify.secret
-});
+var spotify = new Spotify(keys.spotify);
 var client = new Twitter(keys.twitter);
 
 //**** MOVIE THIS ****
 //=============================================================================================================
 if (command === "movie-this" && process.argv[3] === undefined) {
+  movie = "Mr+Nobody";
+  getMovie();
+}
+else if (command === "movie-this") {
+  for (var i = 3; i < process.argv.length; i++) {
+    movie += process.argv[i] + "+";
+    getMovie();
+  }
+}
+function getMovie() {
   //Default OMDB api url if argument left empty
-  request("http://www.omdbapi.com/?t=mr+nobody&y=&plot=short&apikey=trilogy", function (error, response, body) {
+  request("http://www.omdbapi.com/?t=" + movie + "&y=&plot=short&apikey=trilogy", function (error, response, body) {
 
     // If the request is successful (i.e. if the response status code is 200)
     if (!error && response.statusCode === 200) {
@@ -41,11 +48,6 @@ if (command === "movie-this" && process.argv[3] === undefined) {
     }
   });
 }
-// else {
-//   for (var i = ; i < process.)
-//   var movie = process.argv[3]
-// }
-
 //**** MY TWEETS ****
 //=============================================================================================================
 if (command === "my-tweets") {
@@ -68,16 +70,25 @@ if (command === "my-tweets") {
 
 //**** SPOTIFY THIS SONG ****
 //=============================================================================================================
-if (command === "spotify-this-song") {
+if (command === "spotify-this-song" && !process.argv[3]) {
+  song = "The Sign";
+  spotify();
+}
+else if (command === "spotify-this-song") {
   for (var i = 3; i < process.argv.length; i++) {
     song += process.argv[i] + "+";
+    spotify();
   }
-
+}
+function spotify() {
   spotify.search({ type: 'track', query: song }, function (err, data) {
     if (err) {
       return console.log('Error occurred: ' + err);
     }
 
-    console.log(data);
+    console.log(data.tracks.items[0].artists[0].name);
+    console.log(data.tracks.items[0].name);
+    console.log(data.tracks.items[0].preview_url);
+    console.log(data.tracks.items[0].album.name);
   });
 }
