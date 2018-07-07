@@ -11,8 +11,13 @@ var Spotify = require('node-spotify-api');
 //Variables
 //=============================================================================================================
 var command = process.argv[2];
+var song = "";
 //API key information
-var spotify = new Spotify(keys.spotify);
+// var spotify = new Spotify(keys.spotify);
+var spotify = new Spotify({
+  id: keys.spotify.id,
+  secret: keys.spotify.secret
+});
 var client = new Twitter(keys.twitter);
 
 //**** MOVIE THIS ****
@@ -46,14 +51,33 @@ if (command === "movie-this" && process.argv[3] === undefined) {
 if (command === "my-tweets") {
   var params = { screen_name: '@Phineas05526995', count: 20 };
 
-  client.get('statuses/user_timeline', params, function (error, tweets, response) {
+  client.get('statuses/user_timeline', params, function (error, tweets) {
     if (!error) {
-      console.log("LAST 20 TWEETS")
-      console.log("=================================")
+      console.log("\nLAST 20 TWEETS");
+      console.log("=================================");
       for (var i = 0; i < tweets.length; i++) {
-        console.log((i+1) + ". " + tweets[i].text);
+        console.log((i + 1) + ". " + tweets[i].text);
       }
-      console.log("=================================")
+      console.log("=================================\n");
     }
+    else {
+      throw error;
+    }
+  });
+}
+
+//**** SPOTIFY THIS SONG ****
+//=============================================================================================================
+if (command === "spotify-this-song") {
+  for (var i = 3; i < process.argv.length; i++) {
+    song += process.argv[i] + "+";
+  }
+
+  spotify.search({ type: 'track', query: song }, function (err, data) {
+    if (err) {
+      return console.log('Error occurred: ' + err);
+    }
+
+    console.log(data);
   });
 }
