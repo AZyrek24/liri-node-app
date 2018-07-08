@@ -20,6 +20,7 @@ var Spotify = require('node-spotify-api');
 var command = process.argv[2];
 var song = "";
 var movie = "";
+var showData;
 
 //API key information
 var spotify = new Spotify(keys.spotify);
@@ -43,6 +44,8 @@ switch (command) {
     doWhatItSays();
     break;
 }
+//Functions
+//=============================================================================================================
 
 //                                        **** MOVIE THIS ****
 //=============================================================================================================
@@ -57,31 +60,31 @@ function movieThis() {
     }
     movieDisplay();
   }
-  function movieDisplay() {
-    //OMDB api url 
-    request("http://www.omdbapi.com/?t=" + movie + "&y=&plot=short&apikey=trilogy", function (error, response, body) {
+}
+function movieDisplay() {
+  //OMDB api url 
+  request("http://www.omdbapi.com/?t=" + movie + "&y=&plot=short&apikey=trilogy", function (error, response, body) {
 
-      // If the request is successful (i.e. if the response status code is 200)
-      if (!error && response.statusCode === 200) {
-        // Parse the body of the site
-        console.log("\n=================================")
-        console.log("Title: " + JSON.parse(body).Title);
-        console.log("=================================")
-        console.log("Rotten Tomatoes: " + JSON.parse(body).Ratings[1].Value);
-        console.log("\nIMDB: " + JSON.parse(body).Ratings[0].Value);
-        console.log("\nCountry: " + JSON.parse(body).Country);
-        console.log("\nLanguage: " + JSON.parse(body).Language);
-        console.log("\nPlot: " + JSON.parse(body).Plot);
-        console.log("\nActors: " + JSON.parse(body).Actors);
-        console.log("=================================\n")
-      }
-    });
-  }
+    // If the request is successful (i.e. if the response status code is 200)
+    if (!error && response.statusCode === 200) {
+      // Parse the body of the site
+      console.log("\n=================================")
+      console.log("Title: " + JSON.parse(body).Title);
+      console.log("=================================")
+      console.log("Rotten Tomatoes: " + JSON.parse(body).Ratings[1].Value);
+      console.log("\nIMDB: " + JSON.parse(body).Ratings[0].Value);
+      console.log("\nCountry: " + JSON.parse(body).Country);
+      console.log("\nLanguage: " + JSON.parse(body).Language);
+      console.log("\nPlot: " + JSON.parse(body).Plot);
+      console.log("\nActors: " + JSON.parse(body).Actors);
+      console.log("=================================\n")
+    }
+  });
 }
 
 //                                          **** MY TWEETS ****
 //=============================================================================================================
-if (command === "my-tweets") {
+function myTweets() {
   var params = { screen_name: '@Phineas05526995', count: 20 };
 
   client.get('statuses/user_timeline', params, function (error, tweets) {
@@ -104,17 +107,19 @@ if (command === "my-tweets") {
 
 //                                     **** SPOTIFY THIS SONG ****
 //=============================================================================================================
-if (command === "spotify-this-song" && process.argv[3] === undefined) {
-  song = "The Sign";
-  spotifyThisSong();
-}
-else if (command === "spotify-this-song") {
-  for (var i = 3; i < process.argv.length; i++) {
-    song += process.argv[i] + "+";
-  }
-  spotifyThisSong();
-}
 function spotifyThisSong() {
+  if (command === "spotify-this-song" && process.argv[3] === undefined) {
+    song = "The Sign";
+    songDisplay();
+  }
+  else if (command === "spotify-this-song") {
+    for (var i = 3; i < process.argv.length; i++) {
+      song += process.argv[i] + "+";
+    }
+    songDisplay();
+  }
+}
+function songDisplay() {
   spotify.search({ type: 'track', query: song }, function (err, data) {
     if (err) {
       return console.log('Error occurred: ' + err);
@@ -132,16 +137,30 @@ function spotifyThisSong() {
 //                                     **** DO WHAT IT SAYS ****
 //=============================================================================================================
 
-if (command === "do-what-it-says") {
+function doWhatItSays() {
 
   fs.readFile("random.txt", "utf8", function (error, data) {
-
     if (error) {
       return console.log(error);
     }
-    console.log(data);
     var dataArr = data.split(",");
     command = dataArr[0];
-    song = dataArr[1];
+    var argument = dataArr[1];
+    switch (command) {
+      case "my-tweets":
+        myTweets();
+        break;
+
+      case "movie-this":
+        movie = argument;
+        movieDisplay();
+        break;
+
+      case "spotify-this-song":
+        song = argument;
+        songDisplay();
+        break;
+    }
   });
 }
+
