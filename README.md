@@ -6,10 +6,10 @@
   * node liri.js my-tweets
     - This command will log the last 20 tweets of my twitter page
   
-  * node liri.js movie-this '<movie name here>'
+  * node liri.js movie-this <movie name here>
     - This command will log your movie's title, RT rating, IMDB rating, country, language, plot summary, and actors from the OMDB API data.
   
-  * node liri.js spotify-this-song '<song name here>'
+  * node liri.js spotify-this-song <song name here>
     - This command will log data (artist, song's name, preview link, and the album containing the song) from the first matching song in the Spotify API.
   
   * node liri.js do-what-it-says
