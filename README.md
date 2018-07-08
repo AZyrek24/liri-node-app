@@ -1,7 +1,7 @@
 # LIRI Bot Instructions
 
 # LIRI is a command line node app that takes in parameters and gives back data. There are four different commands which can also be followed by a relevant query.
-# Open terminal and direct to the <liri-node-app> filepath.
+# Open terminal and direct to the <liri-node-app> filepath where liri-node-app is located.
 # To Run LIRI, enter one of the following in the command line:
   * node liri.js my-tweets
     - This command will log the last 20 tweets of my twitter page
