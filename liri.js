@@ -23,7 +23,6 @@ var Spotify = require('node-spotify-api');
 var command = process.argv[2];
 var song = '';
 var movie = '';
-var showData;
 
 // API key information
 var spotify = new Spotify(keys.spotify);
@@ -68,9 +67,9 @@ function movieDisplay() {
   // OMDB api url 
   request('http://www.omdbapi.com/?t=' + movie + '&y=&plot=short&apikey=trilogy', function (error, response, body) {
 
-    // If the request is successful (i.e. if the response status code is 200)
+    // If the request is successful
     if (!error && response.statusCode === 200) {
-      // Parse the body of the site
+      // Parse the body of the site and display
       prsBody = JSON.parse(body);
       console.log(`\n==================================================================`.yellow +
                   `\n                       Title: ${prsBody.Title}`.yellow +
@@ -94,7 +93,7 @@ function myTweets() {
   client.get('statuses/user_timeline', params, function (error, tweets) {
     // If the request is successful
     if (!error) {
-      // Parse the text of the tweets
+      // Parse the text of the tweets and display
       console.log(`\n==================================================================`.yellow +
                   `\n                        LAST 20 TWEETS`.yellow +
                   `\n==================================================================\n`.yellow);
@@ -104,6 +103,7 @@ function myTweets() {
       }
       console.log(`==================================================================\n`.yellow);
     }
+    // Error handler
     else {
       throw error;
     }
@@ -126,9 +126,11 @@ function spotifyThisSong() {
 }
 function songDisplay() {
   spotify.search({ type: 'track', query: song }, function (err, data) {
+    // Error handler
     if (err) {
       return console.log('Error occu: ' + err);
     }
+    // Parse the Spotify API data and display
     var items = data.tracks.items;
     console.log(`\n==================================================================\n`.yellow +
                 `                       Artist: ${items[0].artists[0].name}\n`.yellow +
@@ -146,12 +148,15 @@ function songDisplay() {
 function doWhatItSays() {
 
   fs.readFile('random.txt', 'utf8', function (error, data) {
+    // Error handling
     if (error) {
       return console.log(error);
     }
+    // Converts .txt file data to an array and parses arguments
     var dataArr = data.split(',');
     command = dataArr[0];
     var argument = dataArr[1];
+
     switch (command) {
       case 'my-tweets':
         myTweets();
